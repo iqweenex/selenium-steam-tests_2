@@ -1,21 +1,28 @@
 import pytest
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+import time
+
 from selenium.webdriver.support.ui import WebDriverWait
+from webdriver_singleton import WebDriverSingleton
 
 TIMEOUT = 10
-WINDOW_WIDTH = 1920
-WINDOW_HEIGHT = 1080
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def driver():
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-    driver.set_window_size(WINDOW_WIDTH, WINDOW_HEIGHT)
+    driver = WebDriverSingleton.get_driver()
     yield driver
-    driver.quit()
-
 
 @pytest.fixture()
 def wait(driver):
     return WebDriverWait(driver, TIMEOUT)
+
+@pytest.fixture(autouse=True)
+def clean_between_tests(driver):
+    driver.delete_all_cookies()
+    yield
+    driver.get("about:blank")
+    time.sleep(0.5)
+
+@pytest.fixture(scope="session", autouse=True)
+def driver_teardown():
+    yield
+    WebDriverSingleton.quit_driver()
