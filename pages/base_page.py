@@ -2,11 +2,15 @@ from selenium.common import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from webdriver_singleton import WebDriverSingleton
+
+
+
 
 class BasePage:
-    def __init__(self, driver, wait=None):
-        self.driver = driver
-        self.wait = wait or WebDriverWait(driver, 10)
+    def __init__(self, wait=None):
+        self.driver = WebDriverSingleton.get_driver()
+        self.wait = wait or WebDriverWait(self.driver, 10)
 
     def click(self, locator):
         element = self.wait.until(EC.element_to_be_clickable(locator))
@@ -33,10 +37,6 @@ class BasePage:
             return True
         except TimeoutException:
             return False
-
-    def find_elements(self, locator):
-        self.wait.until(EC.presence_of_element_located(locator))
-        return self.driver.find_elements(*locator)
 
     def wait_for_element(self, locator, timeout=None):
         wait = self.wait if timeout is None else WebDriverWait(self.driver, timeout)

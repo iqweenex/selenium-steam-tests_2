@@ -1,6 +1,8 @@
 from pages.base_page import BasePage
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.common import TimeoutException, NoSuchElementException, StaleElementReferenceException
+from selenium.webdriver.support.ui import WebDriverWait
 import re
 import time
 
@@ -15,6 +17,8 @@ class SearchPage(BasePage):
     GAME_TITLE_LOCATOR = (By.XPATH, ".//*[@class='title']")
     GAME_BASE_PRICE_LOCATOR = (By.XPATH, ".//div[contains(@class, 'search_price_discount_combined')]")
     GAME_FINAL_PRICE_LOCATOR = (By.XPATH, ".//*[@class='discount_final_price']")
+
+    SEARCH_RESULTS_LOADING_LOCATOR = (By.XPATH, "//*[@id='search_results_loading']")
 
     def get_current_sort_value(self):
         return self.get_attribute(self.VALUE_SORT_BY_LOCATOR, "value")
@@ -40,7 +44,10 @@ class SearchPage(BasePage):
         if not self.open_sort_menu():
             return False
         self.click(self.SORT_PRICE_DESC_LOCATOR)
-        time.sleep(0.5)
+        WebDriverWait(self.driver, 10, poll_frequency=0.1).until(
+            EC.presence_of_element_located(self.SORT_PRICE_DESC_LOCATOR))
+        WebDriverWait(self.driver, timeout=10, poll_frequency=1).until(
+            EC.presence_of_element_located(self.SEARCH_RESULTS_LOADING_LOCATOR))
         return True
 
     def is_sorted_by_price_desc(self):
@@ -50,7 +57,7 @@ class SearchPage(BasePage):
         game_data = []
         game_elements = self.driver.find_elements(*self.SEARCH_RESULTS_LOCATOR)[:n]
 
-        for i in range(len(game_elements)):
+        for i in range(len(game_elements)+1):
             try:
                 current_element = self.driver.find_elements(*self.SEARCH_RESULTS_LOCATOR)
                 if i >= len(current_element):
@@ -88,23 +95,18 @@ class SearchPage(BasePage):
 
     def _extract_game_price(self, game_element):
         try:
-            # Пробуем извлечь базовую цену
-            price_elements = game_element.find_elements(*self.GAME_BASE_PRICE_LOCATOR)
+            price_elements = game_element.find_elements(*self.GAME_FINAL_PRICE_LOCATOR)
             for price_element in price_elements:
                 price_str = price_element.get_attribute("data-price-final")
                 if price_str:
-                    try:
-                        return float(price_str)
-                    except (ValueError, TypeError):
-                        continue
-
-            # Если не нашли, пробуем финальную цену
-            price_elements = game_element.find_elements(*self.GAME_FINAL_PRICE_LOCATOR)
-            for price_element in price_elements:
-                price_text = price_element.text.strip()
-                parsed = self._parse_price(price_text)
-                if parsed is not None:
-                    return parsed
+                    base_price_elements = game_element.find_elements(*self.GAME_BASE_PRICE_LOCATOR)
+                    for base_price_element in base_price_elements:
+                        base_price_str = base_price_element.get_attribute("data-price-final")
+                        if base_price_str:
+                            try:
+                                return float(base_price_str)
+                            except (ValueError, TypeError):
+                                continue
         except NoSuchElementException:
             pass
 

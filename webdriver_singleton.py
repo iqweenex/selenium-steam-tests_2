@@ -14,6 +14,9 @@ class WebDriverSingleton:
         if cls._driver is None:
             options = Options()
             options.add_argument(f"--window-size={WINDOW_WIDTH},{WINDOW_HEIGHT}")
+            options.add_argument("--disable-blink-features=AutomationControlled")
+            options.add_experimental_option("excludeSwitches", ["enable-automation"])
+            options.add_experimental_option('useAutomationExtension', False)
             service = Service(ChromeDriverManager().install())
 
             cls._driver = webdriver.Chrome(
