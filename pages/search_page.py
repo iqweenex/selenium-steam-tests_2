@@ -6,7 +6,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 import re
 import time
 
-
+#заменить click() на wait
+#убрать get_attribute
+# убрать использование find_element/s
+# использовать парсер цен (библиотеку поискать)
 class SearchPage(BasePage):
     VALUE_SORT_BY_LOCATOR = (By.XPATH, "//input[@id='sort_by']")
     SORT_MENU_BUTTON_LOCATOR = (By.XPATH, "//button[@id='sort_by_trigger']")
@@ -23,29 +26,10 @@ class SearchPage(BasePage):
     def get_current_sort_value(self):
         return self.get_attribute(self.VALUE_SORT_BY_LOCATOR, "value")
 
-    def open_sort_menu(self):
-        if not self.is_visible(self.SORT_MENU_LOCATOR, timeout=1):
-            self.click(self.SORT_MENU_BUTTON_LOCATOR)
-            if not self.is_visible(self.SORT_MENU_LOCATOR):
-                return False
-        return True
-
-    def close_sort_menu(self):
-        if self.is_visible(self.SORT_MENU_LOCATOR, timeout=1):
-            self.click(self.SORT_MENU_BUTTON_LOCATOR)
-            start_time = time.time()
-            while time.time() - start_time < 3:
-                if not self.is_visible(self.SORT_MENU_LOCATOR, timeout=0.5):
-                    return True
-                time.sleep(0.1)
-        return True
-
     def select_sort_price_desc(self):
-        if not self.open_sort_menu():
-            return False
-        self.click(self.SORT_PRICE_DESC_LOCATOR)
-        WebDriverWait(self.driver, 10, poll_frequency=0.1).until(
-            EC.presence_of_element_located(self.SORT_PRICE_DESC_LOCATOR))
+        self.wait.until(EC.element_to_be_clickable(self.SORT_MENU_BUTTON_LOCATOR)).click()
+        self.wait.until(EC.visibility_of_element_located(self.SORT_MENU_LOCATOR))
+        self.wait.until(EC.element_to_be_clickable(self.SORT_PRICE_DESC_LOCATOR)).click()
         WebDriverWait(self.driver, timeout=10, poll_frequency=1).until(
             EC.presence_of_element_located(self.SEARCH_RESULTS_LOADING_LOCATOR))
         return True
