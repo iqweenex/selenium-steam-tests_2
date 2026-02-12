@@ -11,20 +11,15 @@
     "timeout": 10
   },
   "urls": {
-    "steam_main_page": "https://store.steampowered.com/",
-    "steam_main_page_ru": "https://store.steampowered.com/?l=russian",
-    "steam_main_page_en": "https://store.steampowered.com/?l=english"
+    "steam_main_page": "https://store.steampowered.com/"
   },
-  "test_data": {
-    "games": [
-      {
-        "game_name": "The Witcher",
-        "min_count": 10
-      },
-      {
-        "game_name": "Fallout",
-        "min_count": 20
-      }
-    ]
+  "chrome_options": {
+    "arguments": [
+      "--disable-blink-features=AutomationControlled"
+    ],
+    "experimental_options": {
+      "excludeSwitches": ["enable-automation"],
+      "useAutomationExtension": false
+    }
   }
 }

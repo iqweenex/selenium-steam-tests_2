@@ -2,48 +2,51 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
-from config_reader import config
+from config_reader import ConfigReader
 
-
-# сделать через __new__
 
 class WebDriverSingleton:
     _instance = None
+    _driver = None
 
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super(WebDriverSingleton, cls).__new__(cls)
-            browser_config = config.get_browser_config()
-            window_width = browser_config["window_width"]
-            window_height = browser_config["window_height"]
-
-            options = Options()
-            options.add_argument(f"--window-size={window_width},{window_height}")
-            options.add_argument("--disable-blink-features=AutomationControlled")
-            options.add_experimental_option("excludeSwitches", ["enable-automation"])
-            options.add_experimental_option('useAutomationExtension', False)
-            service = Service(ChromeDriverManager().install())
-
-            cls._instance.driver = webdriver.Chrome(
-                service=service,
-                options=options
-            )
+            cls._instance = super().__new__(cls)
         return cls._instance
 
-    def get_driver(self):
-        return self.driver
+    def _init_driver(self):
+        browser_config = ConfigReader.get_browser_config()
+        window_width = browser_config["window_width"]
+        window_height = browser_config["window_height"]
 
-    def quit(self):
-        if self.driver:
-            self.driver.quit()
-            self.driver = None
-        WebDriverSingleton._instance = None
+        options = Options()
+        options.add_argument(f"--window-size={window_width},{window_height}")
 
-    @classmethod
-    def create_driver(cls):
-        return cls()
+        chrome_options_config = ConfigReader.get_chrome_options()
 
-    @classmethod
-    def quit_driver(cls):
-        if cls._instance:
-            cls._instance.quit()
+        arguments = chrome_options_config.get("arguments", [])
+        for arg in arguments:
+            options.add_argument(arg)
+
+        experimental_options = chrome_options_config.get("experimental_options", {})
+        for key, value in experimental_options.items():
+            options.add_experimental_option(key, value)
+
+        service = Service(ChromeDriverManager().install())
+        WebDriverSingleton._driver = webdriver.Chrome(
+            service=service,
+            options=options
+        )
+
+    @staticmethod
+    def get_driver():
+        if WebDriverSingleton._driver is None:
+            WebDriverSingleton()._init_driver()
+        return WebDriverSingleton._driver
+
+    @staticmethod
+    def quit():
+        if WebDriverSingleton._driver:
+            WebDriverSingleton._driver.quit()
+            WebDriverSingleton._driver = None
+            WebDriverSingleton._instance = None
