@@ -6,13 +6,7 @@ from config_reader import ConfigReader
 
 
 class WebDriverSingleton:
-    _instance = None
     _driver = None
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
 
     def _init_driver(self):
         browser_config = ConfigReader.get_browser_config()
@@ -49,4 +43,3 @@ class WebDriverSingleton:
         if WebDriverSingleton._driver:
             WebDriverSingleton._driver.quit()
             WebDriverSingleton._driver = None
-            WebDriverSingleton._instance = None

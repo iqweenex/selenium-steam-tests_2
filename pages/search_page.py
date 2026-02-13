@@ -78,6 +78,13 @@ class SearchPage(BasePage):
             return 0.0
         return price
 
+    def find_element_in_element(self, parent_element, locator, timeout=None):
+        timeout = timeout or ConfigReader.get_browser_config()['timeout']
+        wait = WebDriverWait(self.driver, timeout)
+        return wait.until(
+            lambda d: parent_element.find_element(*locator)
+        )
+
     def _parse_price(self, price_str):
         if price_str is None:
             return 0.0
