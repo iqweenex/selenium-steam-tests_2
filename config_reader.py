@@ -8,7 +8,7 @@ class ConfigReader:
     _config = None
 
     @classmethod
-    def load_config(cls, config_path: str = CONFIG_PATH) -> Dict[str, Any]:
+    def load_config(cls, config_path: str = None) -> Dict[str, Any]:
         if cls._config is None:
             path = config_path or cls.CONFIG_PATH
             if not os.path.exists(path):

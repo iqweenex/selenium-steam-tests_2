@@ -8,7 +8,13 @@ from config_reader import ConfigReader
 class WebDriverSingleton:
     _driver = None
 
-    def _init_driver(self):
+    def __new__(cls):
+        if cls._driver is None:
+            cls._driver = cls._create_driver()
+        return cls._driver
+
+    @staticmethod
+    def _create_driver():
         browser_config = ConfigReader.get_browser_config()
         window_width = browser_config["window_width"]
         window_height = browser_config["window_height"]
@@ -27,16 +33,14 @@ class WebDriverSingleton:
             options.add_experimental_option(key, value)
 
         service = Service(ChromeDriverManager().install())
-        WebDriverSingleton._driver = webdriver.Chrome(
+        return webdriver.Chrome(
             service=service,
             options=options
         )
 
     @staticmethod
     def get_driver():
-        if WebDriverSingleton._driver is None:
-            WebDriverSingleton()._init_driver()
-        return WebDriverSingleton._driver
+        return WebDriverSingleton()
 
     @staticmethod
     def quit():

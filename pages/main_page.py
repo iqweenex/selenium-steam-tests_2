@@ -3,6 +3,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from config_reader import ConfigReader
 from pages.base_page import BasePage
 from selenium.webdriver.support import expected_conditions as EC
+from enums import Language
 
 
 class MainPage(BasePage):
@@ -11,27 +12,18 @@ class MainPage(BasePage):
     LANGUAGE_PULLDOWN_LOCATOR = (By.ID, "language_pulldown")
     LANGUAGE_DROPDOWN_LOCATOR = (By.ID, "language_dropdown")
 
-    ENGLISH_LANG_LOCATOR = (By.XPATH, "//*[@id='language_dropdown']//a[contains(@href, 'english')]")
-    RUSSIAN_LANG_LOCATOR = (By.XPATH, "//*[@id='language_dropdown']//a[contains(@href, 'russian')]")
-
     LOADING_LANGUAGE_LOCATOR = (By.XPATH, "//*[@class='waiting_dialog_throbber']")
 
-    def change_language(self, language):
+    def change_language(self, language: Language):
         timeout = ConfigReader.get_browser_config()['timeout']
-        current_language = self.wait.until(
+        current_button_text = self.wait.until(
             EC.element_to_be_clickable(self.LANGUAGE_PULLDOWN_LOCATOR)).text.lower()
 
-        need_change = False
-        if language == 'en' and current_language != 'language':
-            lang_locator = self.ENGLISH_LANG_LOCATOR
-            need_change = True
-        if language == 'ru' and current_language != 'язык':
-            lang_locator = self.RUSSIAN_LANG_LOCATOR
-            need_change = True
-
-        if need_change:
+        if current_button_text != language.button_text:
             self.wait.until(EC.element_to_be_clickable(self.LANGUAGE_PULLDOWN_LOCATOR)).click()
-            self.wait.until(EC.element_to_be_clickable(lang_locator)).click()
+            self.wait.until(EC.visibility_of_element_located(self.LANGUAGE_DROPDOWN_LOCATOR))
+
+            self.wait.until(EC.element_to_be_clickable(language.locator)).click()
             WebDriverWait(self.driver, timeout=timeout, poll_frequency=0.1).until(
                 EC.presence_of_element_located(self.LOADING_LANGUAGE_LOCATOR)
             )

@@ -2,9 +2,10 @@ import pytest
 from pages.main_page import MainPage
 from pages.search_page import SearchPage
 from test_data_reader import TestDataReader
+from enums import Language
 
 
-@pytest.fixture(params=['en', 'ru'])
+@pytest.fixture(params=[Language.ENGLISH, Language.RUSSIAN], ids=lambda lang: lang.value)
 def language(request):
     return request.param
 

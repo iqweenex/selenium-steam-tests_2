@@ -18,4 +18,3 @@ def wait(driver):
     browser_config = ConfigReader.get_browser_config()
     timeout = browser_config["timeout"]
     return WebDriverWait(driver, timeout)
-

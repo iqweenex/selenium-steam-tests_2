@@ -9,5 +9,3 @@ class BasePage:
         browser_config = ConfigReader.get_browser_config()
         default_timeout = browser_config["timeout"]
         self.wait = wait or WebDriverWait(self.driver, default_timeout)
-
-
