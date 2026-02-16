@@ -1,0 +1,25 @@
+{
+  "environment": {
+    "base_url": "https://store.steampowered.com/",
+    "default_language": "en",
+    "supported_languages": ["en", "ru"]
+  },
+  "browser": {
+    "window_width": 1920,
+    "window_height": 1080,
+    "headless": false,
+    "timeout": 10
+  },
+  "urls": {
+    "steam_main_page": "https://store.steampowered.com/"
+  },
+  "chrome_options": {
+    "arguments": [
+      "--disable-blink-features=AutomationControlled"
+    ],
+    "experimental_options": {
+      "excludeSwitches": ["enable-automation"],
+      "useAutomationExtension": false
+    }
+  }
+}

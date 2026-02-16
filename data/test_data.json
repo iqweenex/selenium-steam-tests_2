@@ -1,0 +1,12 @@
+{
+  "games": [
+    {
+      "game_name": "The Witcher",
+      "min_count": 10
+    },
+    {
+      "game_name": "Fallout",
+      "min_count": 20
+    }
+  ]
+}
