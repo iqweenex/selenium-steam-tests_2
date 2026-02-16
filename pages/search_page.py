@@ -2,14 +2,14 @@ from pages.base_page import BasePage
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from config_reader import ConfigReader
+from utils.config_reader import ConfigReader
 
 
 class SearchPage(BasePage):
     VALUE_SORT_BY_LOCATOR = (By.ID, "sort_by")
     SORT_MENU_BUTTON_LOCATOR = (By.ID, "sort_by_trigger")
     SORT_MENU_LOCATOR = (By.ID, "sort_by_droplist")
-    SORT_PRICE_DESC_LOCATOR = (By.XPATH, "//*[@id='sort_by_droplist']//*[@id='Price_DESC']")
+    SORT_PRICE_DESC_LOCATOR = (By.ID, "Price_DESC")
 
     SEARCH_RESULTS_LOCATOR = (By.XPATH, "//*[@id='search_resultsRows']/*")
     GAME_TITLE_LOCATOR = (By.XPATH, ".//*[@class='title']")

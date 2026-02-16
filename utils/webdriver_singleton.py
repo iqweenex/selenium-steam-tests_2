@@ -2,7 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
-from config_reader import ConfigReader
+from utils.config_reader import ConfigReader
 
 
 class WebDriverSingleton:

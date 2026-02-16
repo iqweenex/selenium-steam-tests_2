@@ -1,6 +1,6 @@
 from selenium.webdriver.support.ui import WebDriverWait
-from webdriver_singleton import WebDriverSingleton
-from config_reader import ConfigReader
+from utils.webdriver_singleton import WebDriverSingleton
+from utils.config_reader import ConfigReader
 
 
 class BasePage:

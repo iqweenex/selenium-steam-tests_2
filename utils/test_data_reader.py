@@ -4,7 +4,7 @@ from typing import Any, Dict, List
 
 
 class TestDataReader:
-    TEST_DATA_PATH = "test_data.json"
+    TEST_DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "test_data.json")
     _test_data = None
 
     @classmethod

@@ -1,8 +1,8 @@
 import pytest
 from pages.main_page import MainPage
 from pages.search_page import SearchPage
-from test_data_reader import TestDataReader
-from enums import Language
+from utils.test_data_reader import TestDataReader
+from enums.language import Language
 
 
 @pytest.fixture(params=[Language.ENGLISH, Language.RUSSIAN], ids=lambda lang: lang.value)

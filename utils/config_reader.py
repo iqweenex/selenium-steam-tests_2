@@ -4,7 +4,7 @@ from typing import Any, Dict
 
 
 class ConfigReader:
-    CONFIG_PATH = "config.json"
+    CONFIG_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config.json")
     _config = None
 
     @classmethod
